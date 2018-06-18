@@ -300,7 +300,7 @@ namespace InstaUnblock
             UnblockMenu.IsChecked = IsUnblocking;
 
             AddContextMenu(Result, LoadAtStartup, true, IsElevated);
-            AddContextMenu(Result, UnblockMenu, true, IsElevated);
+            AddContextMenu(Result, UnblockMenu, true, true);
             AddContextMenuSeparator(Result);
             AddContextMenu(Result, ExitMenu, true, true);
 
@@ -313,16 +313,10 @@ namespace InstaUnblock
 
         private Icon LoadCurrentIcon(bool isUnblockEnabled)
         {
-            if (IsElevated)
-                if (isUnblockEnabled)
-                    return LoadIcon("Unblocking-Enabled.ico");
-                else
-                    return LoadIcon("Idle-Enabled.ico");
+            if (isUnblockEnabled)
+                return LoadIcon("Unblocking-Enabled.ico");
             else
-                if (isUnblockEnabled)
-                    return LoadIcon("Unblocking-Disabled.ico");
-                else
-                    return LoadIcon("Idle-Disabled.ico");
+                return LoadIcon("Idle-Enabled.ico");
         }
 
         private MenuItem LoadNotificationMenuItem(ICommand command)
