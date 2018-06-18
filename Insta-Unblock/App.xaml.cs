@@ -609,7 +609,7 @@ namespace InstaUnblock
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
             if (isInstalled)
-                Scheduler.AddTask("Unblock downloaded files", ExeName, TaskRunLevel.Highest);
+                Scheduler.AddTask("Unblock downloaded files", ExeName, TaskRunLevel.LUA);
             else
                 Scheduler.RemoveTask(ExeName, out bool IsFound);
         }
