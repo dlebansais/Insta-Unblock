@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Insta-Unblock")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Automatically unblock files downloaded from the Internet.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Insta-Unblock")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright ©  2018 David Le Bansais")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -53,3 +53,5 @@ using System.Windows;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.6")]
 [assembly: AssemblyFileVersion("1.0.0.6")]
+[assembly: NeutralResourcesLanguage("en-US")]
+
