@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insta-Unblock", "Insta-Unblock\Insta-Unblock.csproj", "{BB2FA458-EBE5-409C-95D3-0307D9E9F097}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insta-Unblock-Plugin", "Insta-Unblock-Plugin\Insta-Unblock-Plugin.csproj", "{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Debug|x64.Build.0 = Debug|x64
 		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Release|x64.ActiveCfg = Release|x64
 		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Release|x64.Build.0 = Release|x64
+		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Debug|x64.ActiveCfg = Debug|x64
+		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Debug|x64.Build.0 = Debug|x64
+		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Release|x64.ActiveCfg = Release|x64
+		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

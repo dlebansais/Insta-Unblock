@@ -1,0 +1,312 @@
+﻿using FolderTools;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Input;
+using System.Windows.Threading;
+
+namespace InstaUnblock
+{
+    public class InstaUnblockPlugin : MarshalByRefObject, TaskbarIconHost.IPluginClient
+    {
+        #region Plugin
+        public string Name
+        {
+            get { return "Insta-Unblock"; }
+        }
+
+        public Guid Guid
+        {
+            get { return new Guid("{6FCCC808-F32A-4CFA-9AE0-0D50AA4DDB61}"); }
+        }
+
+        public void Initialize(bool isElevated, Dispatcher dispatcher, TaskbarIconHost.IPluginSettings settings, TaskbarIconHost.IPluginLogger logger)
+        {
+            IsElevated = isElevated;
+            Dispatcher = dispatcher;
+            Settings = settings;
+            Logger = logger;
+
+            InitFileUnblockManager();
+
+            UnblockCommand = new RoutedUICommand();
+            CommandList.Add(UnblockCommand);
+            MenuHeaderTable.Add(UnblockCommand, "Unblock");
+        }
+
+        public List<ICommand> CommandList { get; private set; } = new List<ICommand>();
+
+        public bool GetIsMenuChanged()
+        {
+            bool Result = IsMenuChanged;
+            IsMenuChanged = false;
+
+            return Result;
+        }
+
+        public string GetMenuHeader(ICommand Command)
+        {
+            return MenuHeaderTable[Command];
+        }
+
+        public bool GetMenuIsVisible(ICommand Command)
+        {
+            return true;
+        }
+
+        public bool GetMenuIsEnabled(ICommand Command)
+        {
+            return true;
+        }
+
+        public bool GetMenuIsChecked(ICommand Command)
+        {
+            if (Command == UnblockCommand)
+                return IsUnblocking;
+            else
+                return false;
+        }
+
+        public Bitmap GetMenuIcon(ICommand Command)
+        {
+            return null;
+        }
+
+        public void OnMenuOpening()
+        {
+        }
+
+        public void ExecuteCommandHandler(ICommand Command)
+        {
+            if (Command == UnblockCommand)
+                ChangeUnblockMode(!IsUnblocking);
+        }
+
+        public bool IsIconChanged { get; private set; }
+
+        public Icon Icon
+        {
+            get
+            {
+                IsIconChanged = false;
+
+                if (IsUnblocking)
+                    return LoadEmbeddedResource<Icon>("Unblocking-Enabled.ico");
+                else
+                    return LoadEmbeddedResource<Icon>("Idle-Enabled.ico");
+            }
+        }
+
+        public bool IsToolTipChanged
+        {
+            get { return false; }
+        }
+
+        public string ToolTip { get { return "Unblock downloaded files"; } }
+
+        public bool CanClose(bool canClose)
+        {
+            return true;
+        }
+
+        public void BeginClose()
+        {
+            StopFileUnblockManager();
+        }
+
+        public bool IsClosed
+        {
+            get { return true; }
+        }
+
+        public bool IsElevated { get; private set; }
+        public Dispatcher Dispatcher { get; private set; }
+        public TaskbarIconHost.IPluginSettings Settings { get; private set; }
+        public TaskbarIconHost.IPluginLogger Logger { get; private set; }
+
+        private T LoadEmbeddedResource<T>(string resourceName)
+        {
+            // Loads an "Embedded Resource" of type T (ex: Bitmap for a PNG file).
+            foreach (string ResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames())
+                if (ResourceName.EndsWith(resourceName))
+                {
+                    using (Stream rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
+                    {
+                        T Result = (T)Activator.CreateInstance(typeof(T), rs);
+                        Logger.AddLog($"Resource {resourceName} loaded");
+
+                        return Result;
+                    }
+                }
+
+            Logger.AddLog($"Resource {resourceName} not found");
+            return default(T);
+        }
+
+        private ICommand UnblockCommand;
+        private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
+        #endregion
+
+        #region File Unblock Manager
+        private void InitFileUnblockManager()
+        {
+            string DownloadPath = KnownFolders.GetPath(KnownFolder.Downloads, false);
+            WatchFiles(DownloadPath);
+
+            UnblockTimer = new Timer(new TimerCallback(UnblockTimerCallback));
+            UnblockTimer.Change(CheckInterval, CheckInterval);
+        }
+
+        private void StopFileUnblockManager()
+        {
+            UnblockTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            UnblockTimer = null;
+
+            foreach (FileSystemWatcher Watcher in WatcherList)
+            {
+                Watcher.EnableRaisingEvents = false;
+                Watcher.Changed -= OnChanged;
+            }
+
+            WatcherList.Clear();
+        }
+
+        private bool IsUnblocking { get { return Settings.GetSettingBool(UnblockingSettingName, true); } }
+
+        private void ChangeUnblockMode(bool unblock)
+        {
+            Settings.SetSettingBool(UnblockingSettingName, unblock);
+            IsIconChanged = true;
+            IsMenuChanged = true;
+        }
+
+        private void WatchFiles(string folderPath)
+        {
+            Logger.AddLog("Monitoring " + folderPath);
+
+            FileSystemWatcher Watcher = new FileSystemWatcher();
+            Watcher.Path = folderPath;
+            Watcher.NotifyFilter = NotifyFilters.LastWrite;
+            Watcher.Filter = "*.*";
+            Watcher.Changed += OnChanged;
+            Watcher.EnableRaisingEvents = true;
+            WatcherList.Add(Watcher);
+        }
+
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            lock (CreateFileTable)
+            {
+                Logger.AddLog("OnChanged " + e.FullPath + ", " + e.ChangeType);
+
+                if (!CreateFileTable.ContainsKey(e.FullPath))
+                {
+                    Stopwatch NewWatch = new Stopwatch();
+                    CreateFileTable.Add(e.FullPath, NewWatch);
+                    NewWatch.Start();
+                }
+                else
+                {
+                    Stopwatch Watch = CreateFileTable[e.FullPath];
+                    Watch.Restart();
+                }
+            }
+        }
+
+        private void UnblockTimerCallback(object parameter)
+        {
+            if (UnblockTimerOperation == null || UnblockTimerOperation.Status == DispatcherOperationStatus.Completed)
+                UnblockTimerOperation = Dispatcher.BeginInvoke(DispatcherPriority.Normal, new System.Action(OnUnblockTimer));
+        }
+
+        private void OnUnblockTimer()
+        {
+            bool? Unblock = null;
+            List<string> EntryToForget = new List<string>();
+            List<string> EntryToRemove = new List<string>();
+
+            lock (CreateFileTable)
+            {
+                foreach (KeyValuePair<string, Stopwatch> Entry in UnlockedFileTable)
+                {
+                    string Path = Entry.Key;
+                    TimeSpan Elapsed = Entry.Value.Elapsed;
+
+                    if (Elapsed >= MinElapsedTimeForForget)
+                    {
+                        Logger.AddLog("Forgetting " + Path + " (after " + ((int)Elapsed.TotalMilliseconds).ToString() + ")");
+                        EntryToForget.Add(Path);
+                    }
+                }
+
+                foreach (string Path in EntryToForget)
+                    UnlockedFileTable.Remove(Path);
+
+                foreach (KeyValuePair<string, Stopwatch> Entry in CreateFileTable)
+                {
+                    string Path = Entry.Key;
+                    TimeSpan Elapsed = Entry.Value.Elapsed;
+
+                    if (Elapsed >= MinElapsedTimeForUnblock)
+                    {
+                        if (!Unblock.HasValue)
+                            Unblock = IsUnblocking;
+
+                        if (Unblock.Value)
+                        {
+                            EntryToRemove.Add(Path);
+
+                            if (!UnlockedFileTable.ContainsKey(Path))
+                            {
+                                Logger.AddLog("Unblocking " + Path + " (after " + ((int)Elapsed.TotalMilliseconds).ToString() + ")");
+                                UnblockFile(Path);
+
+                                Stopwatch NewWatch = new Stopwatch();
+                                UnlockedFileTable.Add(Path, NewWatch);
+                                NewWatch.Start();
+                            }
+                        }
+                    }
+                }
+
+                foreach (string Path in EntryToRemove)
+                    CreateFileTable.Remove(Path);
+            }
+        }
+
+        private void UnblockFile(string path)
+        {
+            if (!File.Exists(path))
+                return;
+
+            string DirectoryName = Path.GetDirectoryName(path);
+            string FileName = Path.GetFileName(path);
+
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.Arguments = "/C echo.>\"" + FileName + "\":Zone.Identifier";
+            p.StartInfo.WorkingDirectory = DirectoryName;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+
+            Logger.AddLog(path + " unblocked");
+        }
+
+        private static readonly string UnblockingSettingName = "Unblocking";
+        private List<FileSystemWatcher> WatcherList = new List<FileSystemWatcher>();
+        private Dictionary<string, Stopwatch> CreateFileTable = new Dictionary<string, Stopwatch>();
+        private Timer UnblockTimer;
+        private TimeSpan CheckInterval = TimeSpan.FromSeconds(0.1);
+        private TimeSpan MinElapsedTimeForUnblock = TimeSpan.FromSeconds(1.0);
+        private TimeSpan MinElapsedTimeForForget = TimeSpan.FromSeconds(5.0);
+        private DispatcherOperation UnblockTimerOperation = null;
+        private Dictionary<string, Stopwatch> UnlockedFileTable = new Dictionary<string, Stopwatch>();
+        private bool IsMenuChanged;
+        #endregion
+    }
+}
