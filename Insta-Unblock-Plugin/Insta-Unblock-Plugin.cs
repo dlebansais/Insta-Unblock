@@ -24,6 +24,11 @@ namespace InstaUnblock
             get { return new Guid("{6FCCC808-F32A-4CFA-9AE0-0D50AA4DDB61}"); }
         }
 
+        public bool RequireElevated
+        {
+            get { return false; }
+        }
+
         public void Initialize(bool isElevated, Dispatcher dispatcher, TaskbarIconHost.IPluginSettings settings, TaskbarIconHost.IPluginLogger logger)
         {
             IsElevated = isElevated;
@@ -86,14 +91,18 @@ namespace InstaUnblock
                 ChangeUnblockMode(!IsUnblocking);
         }
 
-        public bool IsIconChanged { get; private set; }
+        public bool GetIsIconChanged()
+        {
+            bool Result = IsIconChanged;
+            IsIconChanged = false;
+
+            return Result;
+        }
 
         public Icon Icon
         {
             get
             {
-                IsIconChanged = false;
-
                 if (IsUnblocking)
                     return LoadEmbeddedResource<Icon>("Unblocking-Enabled.ico");
                 else
@@ -101,9 +110,9 @@ namespace InstaUnblock
             }
         }
 
-        public bool IsToolTipChanged
+        public bool GetIsToolTipChanged()
         {
-            get { return false; }
+            return false;
         }
 
         public string ToolTip { get { return "Unblock downloaded files"; } }
@@ -149,6 +158,8 @@ namespace InstaUnblock
 
         private ICommand UnblockCommand;
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
+        private bool IsMenuChanged;
+        private bool IsIconChanged;
         #endregion
 
         #region File Unblock Manager
@@ -306,7 +317,6 @@ namespace InstaUnblock
         private TimeSpan MinElapsedTimeForForget = TimeSpan.FromSeconds(5.0);
         private DispatcherOperation UnblockTimerOperation = null;
         private Dictionary<string, Stopwatch> UnlockedFileTable = new Dictionary<string, Stopwatch>();
-        private bool IsMenuChanged;
         #endregion
     }
 }
