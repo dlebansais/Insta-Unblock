@@ -29,6 +29,11 @@ namespace InstaUnblock
             get { return false; }
         }
 
+        public bool HasClickHandler
+        {
+            get { return false; }
+        }
+
         public void Initialize(bool isElevated, Dispatcher dispatcher, TaskbarIconHost.IPluginSettings settings, TaskbarIconHost.IPluginLogger logger)
         {
             IsElevated = isElevated;
@@ -66,27 +71,27 @@ namespace InstaUnblock
             return Result;
         }
 
-        public string GetMenuHeader(ICommand Command)
+        public string GetMenuHeader(ICommand command)
         {
-            return MenuHeaderTable[Command];
+            return MenuHeaderTable[command];
         }
 
-        public bool GetMenuIsVisible(ICommand Command)
+        public bool GetMenuIsVisible(ICommand command)
         {
-            return MenuIsVisibleTable[Command]();
+            return MenuIsVisibleTable[command]();
         }
 
-        public bool GetMenuIsEnabled(ICommand Command)
+        public bool GetMenuIsEnabled(ICommand command)
         {
-            return MenuIsEnabledTable[Command]();
+            return MenuIsEnabledTable[command]();
         }
 
-        public bool GetMenuIsChecked(ICommand Command)
+        public bool GetMenuIsChecked(ICommand command)
         {
-            return MenuIsCheckedTable[Command]();
+            return MenuIsCheckedTable[command]();
         }
 
-        public Bitmap GetMenuIcon(ICommand Command)
+        public Bitmap GetMenuIcon(ICommand command)
         {
             return null;
         }
@@ -108,6 +113,10 @@ namespace InstaUnblock
             return Result;
         }
 
+        public void IconClicked()
+        {
+        }
+
         public Icon Icon
         {
             get
@@ -117,6 +126,11 @@ namespace InstaUnblock
                 else
                     return LoadEmbeddedResource<Icon>("Idle-Enabled.ico");
             }
+        }
+
+        public Bitmap SelectionBitmap
+        {
+            get { return LoadEmbeddedResource<Bitmap>("Insta-Unblock.png"); }
         }
 
         public bool GetIsToolTipChanged()
@@ -165,7 +179,6 @@ namespace InstaUnblock
             return default(T);
         }
 
-        private ICommand UnblockCommand;
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
         private Dictionary<ICommand, Func<bool>> MenuIsVisibleTable = new Dictionary<ICommand, Func<bool>>();
         private Dictionary<ICommand, Func<bool>> MenuIsEnabledTable = new Dictionary<ICommand, Func<bool>>();

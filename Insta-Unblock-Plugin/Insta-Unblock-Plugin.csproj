@@ -57,6 +57,7 @@
     <EmbeddedResource Include="Resources\Idle-Enabled.ico" />
     <EmbeddedResource Include="Resources\Unblocking-Disabled.ico" />
     <EmbeddedResource Include="Resources\Unblocking-Enabled.ico" />
+    <EmbeddedResource Include="Resources\Insta-Unblock.png" />
     <Content Include="TaskbarIconHost\TaskbarIconShared.dll" />
   </ItemGroup>
   <ItemGroup />
