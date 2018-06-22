@@ -38,9 +38,22 @@ namespace InstaUnblock
 
             InitFileUnblockManager();
 
-            UnblockCommand = new RoutedUICommand();
-            CommandList.Add(UnblockCommand);
-            MenuHeaderTable.Add(UnblockCommand, "Unblock");
+            InitializeCommand("Unblock",
+                              isVisibleHandler: () => true,
+                              isEnabledHandler: () => true,
+                              isCheckedHandler: () => IsUnblocking,
+                              commandHandler:   () => ChangeUnblockMode(!IsUnblocking));
+        }
+
+        private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
+        {
+            ICommand Command = new RoutedUICommand();
+            CommandList.Add(Command);
+            MenuHeaderTable.Add(Command, header);
+            MenuIsVisibleTable.Add(Command, isVisibleHandler);
+            MenuIsEnabledTable.Add(Command, isEnabledHandler);
+            MenuIsCheckedTable.Add(Command, isCheckedHandler);
+            MenuHandlerTable.Add(Command, commandHandler);
         }
 
         public List<ICommand> CommandList { get; private set; } = new List<ICommand>();
@@ -60,20 +73,17 @@ namespace InstaUnblock
 
         public bool GetMenuIsVisible(ICommand Command)
         {
-            return true;
+            return MenuIsVisibleTable[Command]();
         }
 
         public bool GetMenuIsEnabled(ICommand Command)
         {
-            return true;
+            return MenuIsEnabledTable[Command]();
         }
 
         public bool GetMenuIsChecked(ICommand Command)
         {
-            if (Command == UnblockCommand)
-                return IsUnblocking;
-            else
-                return false;
+            return MenuIsCheckedTable[Command]();
         }
 
         public Bitmap GetMenuIcon(ICommand Command)
@@ -85,10 +95,9 @@ namespace InstaUnblock
         {
         }
 
-        public void ExecuteCommandHandler(ICommand Command)
+        public void ExecuteCommandHandler(ICommand command)
         {
-            if (Command == UnblockCommand)
-                ChangeUnblockMode(!IsUnblocking);
+            MenuHandlerTable[command]();
         }
 
         public bool GetIsIconChanged()
@@ -158,6 +167,10 @@ namespace InstaUnblock
 
         private ICommand UnblockCommand;
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
+        private Dictionary<ICommand, Func<bool>> MenuIsVisibleTable = new Dictionary<ICommand, Func<bool>>();
+        private Dictionary<ICommand, Func<bool>> MenuIsEnabledTable = new Dictionary<ICommand, Func<bool>>();
+        private Dictionary<ICommand, Func<bool>> MenuIsCheckedTable = new Dictionary<ICommand, Func<bool>>();
+        private Dictionary<ICommand, Action> MenuHandlerTable = new Dictionary<ICommand, Action>();
         private bool IsMenuChanged;
         private bool IsIconChanged;
         #endregion
