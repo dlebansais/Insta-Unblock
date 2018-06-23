@@ -33,6 +33,12 @@ namespace TaskbarIconHost
             try
             {
                 Guid AppGuid = PluginDetails.Guid;
+                if (AppGuid == Guid.Empty)
+                {
+                    GuidAttribute AppGuidAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>();
+                    AppGuid = Guid.Parse(AppGuidAttribute.Value);
+                }
+
                 string AppUniqueId = AppGuid.ToString("B").ToUpper();
 
                 bool createdNew;
