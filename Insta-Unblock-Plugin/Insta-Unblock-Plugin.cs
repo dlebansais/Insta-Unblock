@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using TaskbarIconHost;
 
 namespace InstaUnblock
 {
@@ -16,12 +17,12 @@ namespace InstaUnblock
         #region Plugin
         public string Name
         {
-            get { return "Insta-Unblock"; }
+            get { return PluginDetails.Name; }
         }
 
         public Guid Guid
         {
-            get { return new Guid("{6FCCC808-F32A-4CFA-9AE0-0D50AA4DDB61}"); }
+            get { return PluginDetails.Guid; }
         }
 
         public bool RequireElevated
