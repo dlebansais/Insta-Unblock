@@ -100,7 +100,7 @@ namespace InstaUnblock
         {
         }
 
-        public void ExecuteCommandHandler(ICommand command)
+        public void OnExecuteCommand(ICommand command)
         {
             MenuHandlerTable[command]();
         }
@@ -113,7 +113,7 @@ namespace InstaUnblock
             return Result;
         }
 
-        public void IconClicked()
+        public void OnIconClicked()
         {
         }
 
@@ -139,6 +139,14 @@ namespace InstaUnblock
         }
 
         public string ToolTip { get { return "Unblock downloaded files"; } }
+
+        public void OnActivated()
+        {
+        }
+
+        public void OnDeactivated()
+        {
+        }
 
         public bool CanClose(bool canClose)
         {
