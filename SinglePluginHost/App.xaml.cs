@@ -470,12 +470,12 @@ namespace TaskbarIconHost
 
                 if (Scheduler.IsTaskActive(ExeName))
                 {
-                    RemoveFromStartupWindow Dlg = new RemoveFromStartupWindow();
+                    RemoveFromStartupWindow Dlg = new RemoveFromStartupWindow(PluginDetails.Name);
                     Dlg.ShowDialog();
                 }
                 else
                 {
-                    LoadAtStartupWindow Dlg = new LoadAtStartupWindow(PluginManager.RequireElevated);
+                    LoadAtStartupWindow Dlg = new LoadAtStartupWindow(PluginManager.RequireElevated, PluginDetails.Name);
                     Dlg.ShowDialog();
                 }
             }
