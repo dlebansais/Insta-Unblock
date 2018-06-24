@@ -12,7 +12,7 @@ using TaskbarIconHost;
 
 namespace InstaUnblock
 {
-    public class InstaUnblockPlugin : MarshalByRefObject, TaskbarIconHost.IPluginClient
+    public class InstaUnblockPlugin : TaskbarIconHost.IPluginClient
     {
         #region Plugin
         public string Name
