@@ -462,7 +462,7 @@ namespace TaskbarIconHost
             if (IsElevated)
             {
                 TaskbarIcon.ToggleMenuIsChecked(LoadAtStartupCommand, out bool Install);
-                InstallLoad(Install);
+                InstallLoad(Install, PluginDetails.Name);
             }
             else
             {
@@ -606,14 +606,14 @@ namespace TaskbarIconHost
         #endregion
 
         #region Load at startup
-        private void InstallLoad(bool isInstalled)
+        private void InstallLoad(bool isInstalled, string appName)
         {
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
             if (isInstalled)
             {
                 TaskRunLevel RunLevel = PluginManager.RequireElevated ? TaskRunLevel.Highest : TaskRunLevel.LUA;
-                Scheduler.AddTask("Taskbar Icon Host", ExeName, RunLevel, Logger);
+                Scheduler.AddTask(appName, ExeName, RunLevel, Logger);
             }
             else
                 Scheduler.RemoveTask(ExeName, out bool IsFound);
