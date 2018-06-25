@@ -2,7 +2,7 @@
 Automatically unblock files downloaded from the Internet.
 
 # Using the program
-Copy binaries from the latest release [here](https://github.com/dlebansais/Insta-Unblock/releases) in a directory, then run InstaUnblock.exe as administrator. This will create a little icon in the task bar.
+Copy [the latest release](https://github.com/dlebansais/Insta-Unblock/releases/download/v1.0.57/InstaUnblock.exe) in a directory, then run it.exe as administrator. This will create a little icon in the task bar.
 
 Right-click the icon to pop a menu with the following items:
 
