@@ -197,6 +197,11 @@
             Interface to an object that reads and writes setting in the registry.
             </summary>
         </member>
+        <member name="M:TaskbarIconHost.IPluginSettings.RenewKey">
+            <summary>
+            Disconnect and reconnect to the registry.
+            </summary>
+        </member>
         <member name="M:TaskbarIconHost.IPluginSettings.IsBoolKeySet(System.String)">
             <summary>
             Check if a boolean value exists in the registry.
