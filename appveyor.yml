@@ -1,0 +1,60 @@
+# version format
+version: v{build}
+
+branches:
+  only:
+    - master
+    - deployment
+
+# Skipping commits with particular message or from specific user
+skip_commits:
+  message: "*[skip ci]*"
+
+image: Visual Studio 2019
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+
+matrix:
+  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
+
+before_build:
+  - nuget restore %APPVEYOR_PROJECT_NAME%.sln
+  - |-
+    printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" > build_all.xml
+    printf "  <Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n" >> build_all.xml
+    printf "    <Target Name=\"Build\">\n" >> build_all.xml
+    printf "      <MSBuild Projects=\"%APPVEYOR_PROJECT_NAME%.sln\" Properties=\"Configuration=Debug;Platform=x64\"/>\n" >> build_all.xml
+    printf "      <MSBuild Projects=\"%APPVEYOR_PROJECT_NAME%.sln\" Properties=\"Configuration=Release;Platform=x64\"/>\n" >> build_all.xml
+    printf "    </Target>\n" >> build_all.xml
+    printf "</Project>\n" >> build_all.xml
+
+build:
+  project: build_all.xml
+
+after_build:
+  - ps: |-
+        $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
+  - ps: $version = $xml.Project.PropertyGroup.Version
+  - ps: set version_tag v$version
+  - ps: $env:VERSION_TAG=$version_tag
+  - echo "Version is %VERSION_TAG%"
+
+test: off
+
+artifacts:
+  - path: $(APPVEYOR_PROJECT_NAME)/bin/x64/Release/net48/win-x64/$(APPVEYOR_PROJECT_NAME).exe
+    name: $(APPVEYOR_PROJECT_NAME)
+
+deploy:
+  - provider: GitHub
+    release: $(VERSION_TAG)
+    description: 'Automatic deployment'
+    auth_token:
+      secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
+    artifact: $(APPVEYOR_PROJECT_NAME)
+    draft: true
+    prerelease: false
+    on:
+      branch: deployment

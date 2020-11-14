@@ -1,14 +1,17 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace FolderTools
+﻿namespace FolderTools
 {
+    using System;
+    using System.Runtime.InteropServices;
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1602 // Enumeration items should be documented
+
     /// <summary>
     /// Class containing methods to retrieve specific file system paths.
     /// </summary>
-    public static class KnownFolders
+    public static class NativeMethods
     {
-        private static string[] _knownFolderGuids = new string[]
+        private static string[] KnownFolderGuids = new string[]
         {
             "{56784854-C6CB-462B-8169-88E350ACB882}", // Contacts
             "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}", // Desktop
@@ -54,8 +57,7 @@ namespace FolderTools
         private static string GetPath(KnownFolder knownFolder, KnownFolderFlags flags, bool defaultUser)
         {
             IntPtr outPath;
-            int result = SHGetKnownFolderPath(new Guid(_knownFolderGuids[(int)knownFolder]),
-                (uint)flags, new IntPtr(defaultUser ? -1 : 0), out outPath);
+            int result = SHGetKnownFolderPath(new Guid(KnownFolderGuids[(int)knownFolder]), (uint)flags, new IntPtr(defaultUser ? -1 : 0), out outPath);
             if (result >= 0)
             {
                 return Marshal.PtrToStringUni(outPath);
@@ -68,7 +70,7 @@ namespace FolderTools
         }
 
         [DllImport("Shell32.dll")]
-        private static extern int SHGetKnownFolderPath( [MarshalAs(UnmanagedType.LPStruct)]Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr ppszPath);
+        private static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)]Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr ppszPath);
 
         [Flags]
         private enum KnownFolderFlags : uint
@@ -82,7 +84,7 @@ namespace FolderTools
             DontVerify = 0x00004000,
             Create = 0x00008000,
             NoAppcontainerRedirection = 0x00010000,
-            AliasOnly = 0x80000000
+            AliasOnly = 0x80000000,
         }
     }
 
@@ -103,6 +105,9 @@ namespace FolderTools
         Pictures,
         SavedGames,
         SavedSearches,
-        Videos
+        Videos,
     }
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore SA1602 // Enumeration items should be documented
 }

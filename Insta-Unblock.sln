@@ -1,15 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insta-Unblock", "Insta-Unblock\Insta-Unblock.csproj", "{BB2FA458-EBE5-409C-95D3-0307D9E9F097}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insta-Unblock-Plugin", "Insta-Unblock-Plugin\Insta-Unblock-Plugin.csproj", "{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinglePluginHost", "SinglePluginHost\SinglePluginHost.csproj", "{1AA662FD-9DDE-4638-B2B5-2367268B5B96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Insta-Unblock", "Insta-Unblock\Insta-Unblock.csproj", "{6CECC2AE-061A-4AFB-9395-7C40C8C0E69C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6} = {A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}
+		{3544EEC7-A686-4D63-9DDD-24DB749ECE29} = {3544EEC7-A686-4D63-9DDD-24DB749ECE29}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreBuild", "PreBuild\PreBuild.csproj", "{1644C858-BB09-4A67-BA79-841968AFEFD4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Insta-Unblock-Plugin", "Insta-Unblock-Plugin\Insta-Unblock-Plugin.csproj", "{3544EEC7-A686-4D63-9DDD-24DB749ECE29}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1644C858-BB09-4A67-BA79-841968AFEFD4} = {1644C858-BB09-4A67-BA79-841968AFEFD4}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F0A0825-CA7A-439F-8981-33FB09ECCB1D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Global
@@ -18,23 +26,23 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Debug|x64.ActiveCfg = Debug|x64
-		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Debug|x64.Build.0 = Debug|x64
-		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Release|x64.ActiveCfg = Release|x64
-		{BB2FA458-EBE5-409C-95D3-0307D9E9F097}.Release|x64.Build.0 = Release|x64
-		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Debug|x64.ActiveCfg = Debug|x64
-		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Debug|x64.Build.0 = Debug|x64
-		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Release|x64.ActiveCfg = Release|x64
-		{A25BE721-2E7E-45E9-B9BE-1F29D2E048C6}.Release|x64.Build.0 = Release|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.ActiveCfg = Debug|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.Build.0 = Debug|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.ActiveCfg = Release|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.Build.0 = Release|x64
+		{6CECC2AE-061A-4AFB-9395-7C40C8C0E69C}.Debug|x64.ActiveCfg = Debug|x64
+		{6CECC2AE-061A-4AFB-9395-7C40C8C0E69C}.Debug|x64.Build.0 = Debug|x64
+		{6CECC2AE-061A-4AFB-9395-7C40C8C0E69C}.Release|x64.ActiveCfg = Release|x64
+		{6CECC2AE-061A-4AFB-9395-7C40C8C0E69C}.Release|x64.Build.0 = Release|x64
+		{1644C858-BB09-4A67-BA79-841968AFEFD4}.Debug|x64.ActiveCfg = Debug|x64
+		{1644C858-BB09-4A67-BA79-841968AFEFD4}.Debug|x64.Build.0 = Debug|x64
+		{1644C858-BB09-4A67-BA79-841968AFEFD4}.Release|x64.ActiveCfg = Release|x64
+		{1644C858-BB09-4A67-BA79-841968AFEFD4}.Release|x64.Build.0 = Release|x64
+		{3544EEC7-A686-4D63-9DDD-24DB749ECE29}.Debug|x64.ActiveCfg = Debug|x64
+		{3544EEC7-A686-4D63-9DDD-24DB749ECE29}.Debug|x64.Build.0 = Debug|x64
+		{3544EEC7-A686-4D63-9DDD-24DB749ECE29}.Release|x64.ActiveCfg = Release|x64
+		{3544EEC7-A686-4D63-9DDD-24DB749ECE29}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A3BACED1-148A-4430-A2B6-AED5FCADD7CD}
+		SolutionGuid = {05352996-81EC-460D-BC25-C035C204B307}
 	EndGlobalSection
 EndGlobal
