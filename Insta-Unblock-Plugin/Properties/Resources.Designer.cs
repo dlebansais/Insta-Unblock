@@ -59,5 +59,14 @@ namespace InstaUnblock.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unblock.
+        /// </summary>
+        public static string Unblock {
+            get {
+                return ResourceManager.GetString("Unblock", resourceCulture);
+            }
+        }
     }
 }
