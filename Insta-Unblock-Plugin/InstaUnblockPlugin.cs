@@ -9,6 +9,7 @@
     using System.Threading;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using Contracts;
     using FolderTools;
     using RegistryTools;
     using ResourceTools;
@@ -83,7 +84,7 @@
 
         private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
         {
-            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture);
+            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture) !;
             ICommand Command = new RoutedUICommand(LocalizedText, header, GetType());
 
             CommandList.Add(Command);
@@ -390,7 +391,7 @@
             }
         }
 
-        private void UnblockTimerCallback(object parameter)
+        private void UnblockTimerCallback(object? parameter)
         {
             if (UnblockTimerOperation == null || UnblockTimerOperation.Status == DispatcherOperationStatus.Completed)
                 UnblockTimerOperation = Dispatcher.BeginInvoke(DispatcherPriority.Normal, new System.Action(OnUnblockTimer));
@@ -456,7 +457,7 @@
             if (!File.Exists(path))
                 return;
 
-            string DirectoryName = Path.GetDirectoryName(path);
+            Contract.RequireNotNull(Path.GetDirectoryName(path), out string DirectoryName);
             string FileName = Path.GetFileName(path);
 
             using Process p = new Process();
@@ -473,7 +474,7 @@
         private const string UnblockingSettingName = "Unblocking";
         private List<FileSystemWatcher> WatcherList = new List<FileSystemWatcher>();
         private Dictionary<string, Stopwatch> CreateFileTable = new Dictionary<string, Stopwatch>();
-        private Timer UnblockTimer = new Timer(new TimerCallback((object state) => { }));
+        private Timer UnblockTimer = new Timer(new TimerCallback((object? state) => { }));
         private TimeSpan CheckInterval = TimeSpan.FromSeconds(0.1);
         private TimeSpan MinElapsedTimeForUnblock = TimeSpan.FromSeconds(1.0);
         private TimeSpan MinElapsedTimeForForget = TimeSpan.FromSeconds(5.0);

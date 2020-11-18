@@ -60,12 +60,11 @@
             int result = SHGetKnownFolderPath(new Guid(KnownFolderGuids[(int)knownFolder]), (uint)flags, new IntPtr(defaultUser ? -1 : 0), out outPath);
             if (result >= 0)
             {
-                return Marshal.PtrToStringUni(outPath);
+                return Marshal.PtrToStringUni(outPath) !;
             }
             else
             {
-                throw new ExternalException("Unable to retrieve the known folder path. It may not "
-                    + "be available on this system.", result);
+                throw new ExternalException("Unable to retrieve the known folder path. It may not be available on this system.", result);
             }
         }
 
