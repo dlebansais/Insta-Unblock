@@ -198,13 +198,9 @@
         {
             get
             {
-                Icon Result;
+                string ResourceName = IsUnblocking ? "Unblocking-Enabled.ico" : "Idle-Enabled.ico";
 
-                if (IsUnblocking)
-                    ResourceLoader.LoadIcon("Unblocking-Enabled.ico", string.Empty, out Result);
-                else
-                    ResourceLoader.LoadIcon("Idle-Enabled.ico", string.Empty, out Result);
-
+                ResourceLoader.LoadIcon(ResourceName, string.Empty, out Icon Result);
                 return Result;
             }
         }
